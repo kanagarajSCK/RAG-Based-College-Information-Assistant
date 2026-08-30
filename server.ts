@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import "dotenv/config";
+import fs from "fs";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import apiRoutes from "./server/routes/api.ts";
@@ -14,7 +16,11 @@ async function startServer() {
   await db.init();
 
   // Basic Middlewares
-  app.use(cors());
+  const allowedOrigins = process.env.FRONTEND_URL
+    ?.split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+  app.use(cors({ origin: allowedOrigins?.length ? allowedOrigins : true }));
   app.use(express.json({ limit: "30mb" }));
   app.use(express.urlencoded({ extended: true, limit: "30mb" }));
 
@@ -30,10 +36,13 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
+    const indexPath = path.join(distPath, "index.html");
+    if (fs.existsSync(indexPath)) {
+      app.use(express.static(distPath));
+      app.get("*", (req, res) => {
+        res.sendFile(indexPath);
+      });
+    }
   }
 
   app.listen(PORT, "0.0.0.0", () => {
