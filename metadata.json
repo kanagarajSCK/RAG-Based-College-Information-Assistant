@@ -1,0 +1,6 @@
+{
+  "name": "CampusIQ — College Information Assistant",
+  "description": "A production-quality RAG-based college chatbot grounded in official college documents with role-based student and admin dashboards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
