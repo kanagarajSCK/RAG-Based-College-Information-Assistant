@@ -24,6 +24,14 @@ async function startServer() {
   app.use(express.json({ limit: "30mb" }));
   app.use(express.urlencoded({ extended: true, limit: "30mb" }));
 
+  app.get("/", (req, res) => {
+    res.json({
+      service: "CampusIQ RAG Backend API",
+      status: "ok",
+      health: "/api/health",
+    });
+  });
+
   // API Routes FIRST
   app.use("/api", apiRoutes);
 
